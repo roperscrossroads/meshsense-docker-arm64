@@ -3,6 +3,47 @@
 
 # MeshSense Docker Compose Quick Commands
 
+## Quick start
+
+```
+git clone https://github.com/roperscrossroads/meshsense-docker-arm64.git
+```
+
+```
+cd meshsense-docker-arm64
+```
+
+```
+chmod +x install-docker.sh
+```
+
+```
+./install-docker.sh
+```
+
+```
+newgrp docker
+```
+
+```
+sed -i "s/ACCESS_KEY=changeme/ACCESS_KEY=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c16)/" docker-compose.yml
+```
+
+```
+ docker compose build
+```
+
+
+# Useful Docker Commands
+
+## 📋 See What’s Running
+
+```
+docker compose ps
+```
+
+Lists all containers managed by your compose file.
+
 ## 🚀 Build the Container
 
 ```
@@ -50,11 +91,3 @@ docker compose down
 ```
 
 Stops and removes containers, networks, and by default, anonymous volumes.
-
-## 📋 See What’s Running
-
-```
-docker compose ps
-```
-
-Lists all containers managed by your compose file.

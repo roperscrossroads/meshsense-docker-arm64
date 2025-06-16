@@ -23,9 +23,12 @@ RUN groupadd -g 1000 mesh && \
 
 WORKDIR /home/mesh
 
-# Download the MeshSense AppImage
+# Download the Meshsense AppImage & extract it:
 RUN wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
-    chmod +x meshsense-beta-arm64.AppImage
+    chmod +x meshsense-beta-arm64.AppImage && \
+    ./meshsense-beta-arm64.AppImage --appimage-extract && \
+    mv squashfs-root meshsense-app && \
+    rm meshsense-beta-arm64.AppImage
 
 # Copy entrypoint script
 COPY entrypoint.sh /home/mesh/entrypoint.sh
