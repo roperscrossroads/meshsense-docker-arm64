@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  meshsense-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: meshsense-webui
+    ports:
+      - "5920:5920"
+    environment:
+      - ADDRESS=192.168.9.231 # # The IP address of your Meshtastic node
+      - PORT=5920  # The port you will use to access the Meshsense web UI
+      - DEV_UI_URL=http://localhost:5920
+      - ACCESS_KEY=changeme
+    tty: true
+    stdin_open: true
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    #   - /dev/ttyACM0:/dev/ttyACM0
+    volumes:
+      - ./meshsense-data:/home/mesh/.meshsense
+    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:5921/"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    user: "1000:1000"
+    labels:
+      - "project=meshsense"
