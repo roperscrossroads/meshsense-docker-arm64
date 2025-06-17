@@ -1,11 +1,7 @@
 # Stage 1: Builder
 FROM debian:bookworm AS builder
 
-ARG TARGETARCH
-ARG BUILD_ARCH=x86_64
-ENV BUILD_ARCH=${BUILD_ARCH}
-
-# Install extraction dependencies only
+# Install extraction dependencies
 RUN apt-get update && \
     apt-get install -y \
         wget \
@@ -17,17 +13,13 @@ RUN apt-get update && \
 
 WORKDIR /tmp
 
-# Download and extract AppImage ONLY for arm64
-RUN if [ "$TARGETARCH" = "arm64" ]; then \
-      wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${BUILD_ARCH}.AppImage -O appimage-extract && \
-      [ -f appimage-extract ] && chmod +x appimage-extract && \
-      wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
-      [ -f meshsense-beta-arm64.AppImage ] && chmod +x meshsense-beta-arm64.AppImage && \
-      ./appimage-extract meshsense-beta-arm64.AppImage && \
-      rm -f appimage-extract meshsense-beta-arm64.AppImage; \
-    else \
-      echo "Skipping AppImage extraction for $TARGETARCH"; \
-    fi
+# Download and extract AppImage
+RUN wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-arm64.AppImage -O appimagetool \
+    && chmod +x appimagetool \
+    && wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage \
+    && chmod +x meshsense-beta-arm64.AppImage \
+    && ./appimagetool --appimage-extract meshsense-beta-arm64.AppImage \
+    && rm -f appimagetool meshsense-beta-arm64.AppImage
 
 # Stage 2: Runtime
 FROM debian:bookworm-slim
@@ -54,7 +46,7 @@ RUN apt-get update && \
 RUN groupadd -g 1000 mesh && \
     useradd --create-home --home-dir /home/mesh --uid 1000 --gid 1000 --groups dialout mesh
 
-# Copy extracted files from builder (will only exist for arm64)
+# Copy extracted files from builder
 COPY --from=builder --chown=mesh:mesh /tmp/squashfs-root /meshsense
 RUN ln -sf /meshsense/meshsense /meshsense/app
 
