@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM arm64v8/debian:bookworm AS builder
+FROM debian:bookworm AS builder
 
 # Install extraction dependencies only
 RUN apt-get update && \
@@ -18,7 +18,7 @@ RUN wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImag
     ./meshsense-beta-arm64.AppImage --appimage-extract
 
 # Stage 2: Runtime
-FROM arm64v8/debian:bookworm
+FROM debian:bookworm-slim
 
 # Install runtime dependencies
 RUN apt-get update && \
