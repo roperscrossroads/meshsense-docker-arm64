@@ -11,15 +11,22 @@ services:
     environment:
       - ADDRESS=192.168.9.231 # # The IP address of your Meshtastic node
       - PORT=5920  # The port you will use to access the Meshsense web UI
-      - DEV_UI_URL=http://localhost:5920
+      - HOST=0.0.0.0 # The host you will use to access the Meshsense web UI (in the container)
       - ACCESS_KEY=changeme
     tty: true
     stdin_open: true
+    cap_add:
+      - SYS_ADMIN       # Required for sandboxing
+      - SYS_CHROOT      # Needed for namespace operations
+    security_opt:
+      - seccomp:unconfined  # Allow syscalls needed by Chromium
     # devices:
     #   - /dev/ttyUSB0:/dev/ttyUSB0
     #   - /dev/ttyACM0:/dev/ttyACM0
+    #  - /dev/serial/by-id:/dev/serial/by-id
     volumes:
       - ./meshsense-data:/home/mesh/.meshsense
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket:ro      
     restart: unless-stopped
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:5921/"]

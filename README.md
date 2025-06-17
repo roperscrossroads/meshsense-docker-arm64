@@ -33,6 +33,16 @@ sed -i "s/ACCESS_KEY=changeme/ACCESS_KEY=$(tr -dc 'A-Za-z0-9' < /dev/urandom | h
  docker compose build
 ```
 
+```
+docker compose up
+```
+
+Once you see it working, ctrl+c and run it like this:
+
+```
+docker compose up -d
+```
+
 
 # Useful Docker Commands
 
@@ -91,3 +101,19 @@ docker compose down
 ```
 
 Stops and removes containers, networks, and by default, anonymous volumes.
+
+## 🚀 Get a root shell in a running container: 
+
+```
+docker ps
+```
+
+    CONTAINER ID   IMAGE                                    COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+    bb2754fe6146   meshsense-docker-arm64-meshsense-webui   "/home/mesh/entrypoi…"   5 minutes ago   Up 4 minutes   0.0.0.0:5920->5920/tcp, [::]:5920->5920/tcp   meshsense-webui
+
+
+```
+docker exec -it  -u root meshsense-webui bash
+```
+
+    root@bb2754fe6146:/meshsense#
