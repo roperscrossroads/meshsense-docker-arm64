@@ -14,7 +14,7 @@ RUN apt-get update && \
 WORKDIR /tmp
 
 # Download and extract AppImage
-RUN wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-arm64.AppImage -O appimagetool \
+RUN wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-aarch64.AppImage -O appimagetool \
     && chmod +x appimagetool \
     && wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage \
     && chmod +x meshsense-beta-arm64.AppImage \
