@@ -42,6 +42,62 @@ Once you see it working, ctrl+c and run it like this:
 docker compose up -d
 ```
 
+---
+
+# Pair with bluetooth
+
+TODO: test this again on a newly-flashed RPI
+
+Using a bluetooth device requires that you run some CLI commands on the RPI to get it to trust the device. This is the basic flow.
+
+## Using `bluetoothctl` to Trust and Connect to a Device
+
+1. **Start `bluetoothctl`:**
+   ```sh
+   bluetoothctl
+   ```
+
+2. **Power on the Bluetooth adapter:**
+   ```
+   power on
+   ```
+
+3. **Enable agent and set as default:**
+   ```
+   agent on
+   default-agent
+   ```
+
+4. **Scan for devices:**
+   ```
+   scan on
+   ```
+   *Wait for your device to appear and note its MAC address (e.g., `00:1D:43:6D:03:26`).*
+
+5. **Pair with the device:**
+   ```
+   pair 00:1D:43:6D:03:26
+   ```
+
+6. **Trust the device:**
+   ```
+   trust 00:1D:43:6D:03:26
+   ```
+
+7. **Connect to the device:**
+   ```
+   connect 00:1D:43:6D:03:26
+   ```
+
+8. **(Optional) Stop scanning and exit:**
+   ```
+   scan off
+   exit
+   ```
+
+This sequence will pair, trust, and connect to a Bluetooth device using `bluetoothctl`.
+
+---
 
 # Useful Docker Commands
 
