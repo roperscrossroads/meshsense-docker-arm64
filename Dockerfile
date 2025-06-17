@@ -18,7 +18,7 @@ RUN wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImag
     ./meshsense-beta-arm64.AppImage --appimage-extract
 
 # Stage 2: Runtime
-FROM arm64v8/debian:bookworm-slim
+FROM arm64v8/debian:bookworm
 
 # Install runtime dependencies
 RUN apt-get update && \
