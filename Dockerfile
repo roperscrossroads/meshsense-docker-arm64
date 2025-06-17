@@ -10,7 +10,7 @@ RUN apt-get update && \
         libfuse2 \
         zlib1g-dev \
         ca-certificates \
-        bsdtar \
+        libarchive-tools \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
