@@ -10,15 +10,18 @@ RUN apt-get update && \
         libfuse2 \
         zlib1g-dev \
         ca-certificates \
+        bsdtar \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
 
 # Download and extract AppImage ONLY for arm64
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
+      wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimage-extract -O appimage-extract && \
+      chmod +x appimage-extract && \
       wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
       chmod +x meshsense-beta-arm64.AppImage && \
-      ./meshsense-beta-arm64.AppImage --appimage-extract; \
+      ./appimage-extract meshsense-beta-arm64.AppImage; \
     else \
       echo "Skipping AppImage extraction for $TARGETARCH"; \
     fi
@@ -50,9 +53,11 @@ RUN groupadd -g 1000 mesh && \
 
 # Copy extracted files from builder (will only exist for arm64)
 COPY --from=builder --chown=mesh:mesh /tmp/squashfs-root /meshsense
-RUN ln -s /meshsense/meshsense /meshsense/app
+RUN ln -sf /meshsense/meshsense /meshsense/app || true
 
-RUN chown root:root /meshsense/chrome-sandbox && chmod 4755 /meshsense/chrome-sandbox
+RUN if [ -f /meshsense/chrome-sandbox ]; then \
+      chown root:root /meshsense/chrome-sandbox && chmod 4755 /meshsense/chrome-sandbox; \
+    fi
 
 # Copy entrypoint script
 COPY --chown=mesh:mesh entrypoint.sh /home/mesh/entrypoint.sh
