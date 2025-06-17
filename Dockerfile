@@ -21,7 +21,8 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then \
       chmod +x appimage-extract && \
       wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
       chmod +x meshsense-beta-arm64.AppImage && \
-      ./appimage-extract meshsense-beta-arm64.AppImage; \
+      ./appimage-extract meshsense-beta-arm64.AppImage && \
+      rm -f appimage-extract meshsense-beta-arm64.AppImage; \
     else \
       echo "Skipping AppImage extraction for $TARGETARCH"; \
     fi
