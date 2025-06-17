@@ -13,13 +13,11 @@ RUN apt-get update && \
 
 WORKDIR /tmp
 
-# Download and extract AppImage
-RUN wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-aarch64.AppImage -O appimagetool \
-    && chmod +x appimagetool \
-    && wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage \
-    && chmod +x meshsense-beta-arm64.AppImage \
-    && ./appimagetool --appimage-extract meshsense-beta-arm64.AppImage \
-    && rm -f appimagetool meshsense-beta-arm64.AppImage
+# Download and extract AppImage using bsdtar (no FUSE/execution)
+RUN wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage \
+    && mkdir squashfs-root \
+    && bsdtar -xf meshsense-beta-arm64.AppImage -C squashfs-root \
+    && rm meshsense-beta-arm64.AppImage
 
 # Stage 2: Runtime
 FROM debian:bookworm-slim
