@@ -56,11 +56,13 @@ jobs:
           build-args: |
             NATIVEBUILD=false
 
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
+      - name: Install cosign
         uses: sigstore/cosign-installer@v3
         with:
           cosign-release: 'v2.2.4'
+
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
