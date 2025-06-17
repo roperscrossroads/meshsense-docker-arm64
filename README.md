@@ -1,6 +1,12 @@
 # MeshSense Docker Compose
 
-Seems to be working with Wifi, might work with Bluetooth. Will update more soon. Tested on RPI4, should work on RPI3 & RPI5 as well.
+## Testing Status 
+
+Verified to connect via Wifi and Bluetooth on an RPI4 using Raspberry Pi OS 64-bit (Debian Bookworm 2025-05-13). It should work on RPI3 & RPI5 as well. Needs to be tested more thoroughly.
+
+- RPI4 -> Meshtastic Wifi WORKS
+- RPI4 -> Meshtastic Bluetooth WORKS
+- RPI4 -> Meshtastic serial UNTESTED
 
 ## Quick start
 
