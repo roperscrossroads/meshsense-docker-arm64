@@ -1,7 +1,6 @@
+# MeshSense Docker Compose
 
-
-
-# MeshSense Docker Compose Quick Commands
+Seems to be working with Wifi, might work with Bluetooth. Will update more soon. Tested on RPI4, should work on RPI3 & RPI5 as well.
 
 ## Quick start
 
