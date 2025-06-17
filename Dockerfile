@@ -17,7 +17,7 @@ WORKDIR /tmp
 
 # Download and extract AppImage ONLY for arm64
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-      wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-aarch64.AppImage -O appimage-extract && \
+      wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$TARGETARCH.AppImage -O appimage-extract && \
       [ -f appimage-extract ] && chmod +x appimage-extract && \
       wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
       [ -f meshsense-beta-arm64.AppImage ] && chmod +x meshsense-beta-arm64.AppImage && \
