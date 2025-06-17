@@ -2,6 +2,8 @@
 FROM debian:bookworm AS builder
 
 ARG TARGETARCH
+ARG BUILD_ARCH=x86_64
+ENV BUILD_ARCH=${BUILD_ARCH}
 
 # Install extraction dependencies only
 RUN apt-get update && \
@@ -17,7 +19,7 @@ WORKDIR /tmp
 
 # Download and extract AppImage ONLY for arm64
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-      wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$TARGETARCH.AppImage -O appimage-extract && \
+      wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${BUILD_ARCH}.AppImage -O appimage-extract && \
       [ -f appimage-extract ] && chmod +x appimage-extract && \
       wget https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage && \
       [ -f meshsense-beta-arm64.AppImage ] && chmod +x meshsense-beta-arm64.AppImage && \
