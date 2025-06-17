@@ -53,7 +53,7 @@ RUN groupadd -g 1000 mesh && \
 
 # Copy extracted files from builder (will only exist for arm64)
 COPY --from=builder --chown=mesh:mesh /tmp/squashfs-root /meshsense
-RUN ln -sf /meshsense/meshsense /meshsense/app || true
+RUN ln -sf /meshsense/meshsense /meshsense/app
 
 RUN if [ -f /meshsense/chrome-sandbox ]; then \
       chown root:root /meshsense/chrome-sandbox && chmod 4755 /meshsense/chrome-sandbox; \
