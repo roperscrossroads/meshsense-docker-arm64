@@ -7,13 +7,15 @@ services:
       dockerfile: Dockerfile
     container_name: meshsense-webui
     ports:
-      - "5920:5920"
+      - "5920:5920"  # API
+      - "5921:5921"  # UI
     environment:
       - ADDRESS=192.168.9.231 # # The IP address of your Meshtastic node
-      - PORT=5920  # The port you will use to access the Meshsense web UI
+      - PORT=5921 # API port
       - HOST=0.0.0.0 # The host you will use to access the Meshsense web UI (in the container)
       - ACCESS_KEY=changeme
       - NATIVEBUILD=true # Helps determine if we're on a native ARM64 system
+      - DEV_UI_URL=http://localhost:5921 # URL for the UI
     tty: true
     stdin_open: true
     cap_add:
