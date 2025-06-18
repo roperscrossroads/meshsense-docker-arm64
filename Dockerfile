@@ -65,5 +65,5 @@ RUN chmod 0700 /home/mesh/entrypoint.sh
 
 USER mesh
 WORKDIR /meshsense
-EXPOSE 5920
+EXPOSE 5920 5921
 ENTRYPOINT ["/home/mesh/entrypoint.sh"]
