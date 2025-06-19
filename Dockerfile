@@ -36,14 +36,18 @@ RUN apt-get update && \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd -g 1000 mesh && \
-    useradd --create-home --home-dir /home/mesh --uid 1000 --gid 1000 mesh && \
-    usermod -aG dialout mesh
+# Add node user to dialout group for Bluetooth permissions
+RUN usermod -aG dialout node
 
-COPY --from=builder --chown=mesh:mesh /meshsense /meshsense
+# Create custom home directory
+RUN mkdir -p /home/mesh && chown node:node /home/mesh
 
+# Copy app as node user
+COPY --from=builder --chown=node:node /meshsense /meshsense
+
+# Configure DBus with unique machine ID
 RUN mkdir -p /var/run/dbus && \
-    chown mesh:mesh /var/run/dbus && \
+    chown node:node /var/run/dbus && \
     dbus-uuidgen > /var/lib/dbus/machine-id
 
 # Security: Remove setuid from chrome-sandbox if exists
@@ -51,7 +55,7 @@ RUN if [ -f /meshsense/chrome-sandbox ]; then \
         chmod 0755 /meshsense/chrome-sandbox; \
     fi
 
-USER mesh
+USER node
 WORKDIR /meshsense
 EXPOSE 5920
 

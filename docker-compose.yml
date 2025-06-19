@@ -16,9 +16,6 @@ services:
       - DISPLAY=:99  # Required for headless Electron
     cap_add:
       - NET_ADMIN  # For network operations
-    security_opt:
-      - no-new-privileges
-      - seccomp=./seccomp-chromium.json  # Custom profile
     devices:
       - /dev/ttyAMA0:/dev/ttyAMA0  # Raspberry Pi Bluetooth
       - /dev/serial/by-id:/dev/serial/by-id
