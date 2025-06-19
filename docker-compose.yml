@@ -1,41 +1,36 @@
 version: "3.8"
 
 services:
-  meshsense-webui:
+  meshsense:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: meshsense-webui
+    container_name: meshsense
     ports:
-      - "5920:5920"  # API
-      - "5921:5921"  # UI
+      - "5920:5920"  # API port
     environment:
-      - ADDRESS=192.168.9.231 # # The IP address of your Meshtastic node
-      - PORT=5921
-      - HOST=0.0.0.0 # The host you will use to access the Meshsense web UI (in the container)
+      #- ADDRESS=192.168.9.231
+      - PORT=5920
+      - HOST=0.0.0.0
       - ACCESS_KEY=changeme
-      - NATIVEBUILD=true # Helps determine if we're on a native ARM64 system
-      - DEV_UI_URL=http://localhost:5921 # URL for the UI
-    tty: true
-    stdin_open: true
+      - DISPLAY=:99
     cap_add:
-      - SYS_ADMIN       # Required for sandboxing
-      - SYS_CHROOT      # Needed for namespace operations
-    security_opt:
-      - seccomp:unconfined  # Allow syscalls needed by Chromium
-    # devices:
-    #   - /dev/ttyUSB0:/dev/ttyUSB0
-    #   - /dev/ttyACM0:/dev/ttyACM0
+      - NET_ADMIN
+    #devices:
+    #  - /dev/ttyAMA0:/dev/ttyAMA0
     #  - /dev/serial/by-id:/dev/serial/by-id
     volumes:
-      - ./meshsense-data:/home/mesh/.meshsense
-      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket:ro      
+      - meshsense-data:/home/mesh/.meshsense
+      - /run/dbus:/run/dbus:ro
     restart: unless-stopped
     # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:5921/"]
+    #   test: ["CMD", "curl", "-f", "http://localhost:5920/health"]
     #   interval: 30s
     #   timeout: 10s
     #   retries: 3
     user: "1000:1000"
     labels:
       - "project=meshsense"
+
+volumes:
+  meshsense-data:
