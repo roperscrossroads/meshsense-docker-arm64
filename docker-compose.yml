@@ -11,14 +11,14 @@ services:
     environment:
       #- ADDRESS=192.168.9.231
       - PORT=5920
+      - HOST=0.0.0.0
       - ACCESS_KEY=changeme
-      - DEV_UI_URL=http://localhost:5921
-      - DISPLAY=:99  # Required for headless Electron
+      - DISPLAY=:99
     cap_add:
-      - NET_ADMIN  # For network operations
-    devices:
-      - /dev/ttyAMA0:/dev/ttyAMA0  # Raspberry Pi Bluetooth
-      - /dev/serial/by-id:/dev/serial/by-id
+      - NET_ADMIN
+    #devices:
+    #  - /dev/ttyAMA0:/dev/ttyAMA0
+    #  - /dev/serial/by-id:/dev/serial/by-id
     volumes:
       - meshsense-data:/home/mesh/.meshsense
       - /run/dbus:/run/dbus:ro
@@ -28,7 +28,7 @@ services:
     #   interval: 30s
     #   timeout: 10s
     #   retries: 3
-    user: "1000:1000"  # Matches Dockerfile UID
+    user: "1000:1000"
     labels:
       - "project=meshsense"
 

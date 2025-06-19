@@ -7,7 +7,6 @@ ENV NATIVEBUILD=${NATIVEBUILD}
 RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /meshsense
-
 RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
 
 RUN node ./update.mjs
@@ -16,8 +15,7 @@ WORKDIR /meshsense/api/webbluetooth
 RUN npm install && npm run build:all
 
 WORKDIR /meshsense/api
-RUN npm install --include=dev && \
-    npm run build
+RUN npm install --include=dev && npm run build
 
 WORKDIR /meshsense/ui
 RUN npm install --include=dev && npm run build
@@ -66,5 +64,4 @@ WORKDIR /meshsense
 EXPOSE 5920
 
 ENTRYPOINT ["dumb-init", "--"]
-#CMD ["sh", "-c", "dbus-daemon --system --fork && node /meshsense/api/dist/index.cjs --headless --disable-gpu --in-process-gpu --disable-software-rasterizer"]
 CMD ["node", "/meshsense/api/dist/index.cjs", "--headless", "--disable-gpu", "--in-process-gpu", "--disable-software-rasterizer"]
