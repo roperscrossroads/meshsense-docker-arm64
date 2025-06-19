@@ -4,17 +4,23 @@ FROM node:23-bookworm-slim AS builder
 ARG NATIVEBUILD=false
 ENV NATIVEBUILD=${NATIVEBUILD}
 
-RUN apt-get update && apt-get install -y libdbus-1-3 git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /meshsense
 
-RUN git clone https://github.com/Affirmatech/MeshSense.git .
+RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
+
+RUN node ./update.mjs
+
+WORKDIR /meshsense/api/webbluetooth
+RUN npm install && npm run build:all
 
 WORKDIR /meshsense/api
-RUN npm install --omit=dev
+RUN npm install --include=dev && \
+    npm run build
 
 WORKDIR /meshsense/ui
-RUN npm install --omit=dev
+RUN npm install --include=dev && npm run build
 
 # Stage 2: Runtime
 FROM node:23-bookworm-slim
@@ -60,4 +66,5 @@ WORKDIR /meshsense
 EXPOSE 5920
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["sh", "-c", "dbus-daemon --system --fork && node /meshsense/api/dist/index.cjs --headless --disable-gpu --in-process-gpu --disable-software-rasterizer"]
+#CMD ["sh", "-c", "dbus-daemon --system --fork && node /meshsense/api/dist/index.cjs --headless --disable-gpu --in-process-gpu --disable-software-rasterizer"]
+CMD ["node", "/meshsense/api/dist/index.cjs", "--headless", "--disable-gpu", "--in-process-gpu", "--disable-software-rasterizer"]
