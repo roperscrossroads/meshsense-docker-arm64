@@ -8,7 +8,7 @@ ENV NATIVEBUILD=${NATIVEBUILD}
 RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /meshsense
-RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git . \
+RUN git clone https://github.com/Affirmatech/MeshSense.git . \
     && git checkout ${MESHSENSE_COMMIT_ID} \
     && git submodule update --init --recursive
 
