@@ -1,13 +1,16 @@
 # Stage 1: Builder
 FROM node:23-bookworm-slim AS builder
 
+ARG MESHSENSE_COMMIT_ID=6db3469
 ARG NATIVEBUILD=false
 ENV NATIVEBUILD=${NATIVEBUILD}
 
 RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /meshsense
-RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
+RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git . \
+    && git checkout ${MESHSENSE_COMMIT_ID} \
+    && git submodule update --init --recursive
 
 RUN node ./update.mjs
 
