@@ -1,6 +1,6 @@
-# MeshSense Docker Compose for RPI/arm64
+# MeshSense Docker Compose for Multi-Platform (ARM64 & x86-64)
 
-This project aims to build an arm64 version of MeshSense that can easily be run on 64-bit RPI boards such as the RPI3/4/5. It might also work on other arm64 boards. It can be built locally but that takes a while so I would recommend starting with the automated build. If you have Docker installed, you can run MeshSense with a single command.
+This project builds MeshSense for multiple architectures (ARM64 and x86-64) that can easily be run on various platforms including 64-bit Raspberry Pi boards (RPI3/4/5), Intel/AMD systems, and other ARM64/x86-64 compatible hardware. It can be built locally but that takes a while so I would recommend starting with the automated build. If you have Docker installed, you can run MeshSense with a single command.
 
 Please hop in the [CSRA Mesh Discord](https://discord.com/invite/mgzj2PmhKf) and the [Mountain Mesh Discord](https://discord.gg/4WN32RHGSs) if you get it going and have an questions.
 
@@ -8,14 +8,16 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 
 ## Testing Status
 
-| Device | Runs | WiFi | Bluetooth | Serial     |
-|--------|------|------|-----------|------------|
-| RPI3   | ✅   | ⏳ Untested | ⏳ Internal BT is unreliable | ⏳ Untested |
-| RPI4   | ✅   | ✅ | ✅ | ⏳ Untested |
-| RPI5   | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
+| Platform | Device | Runs | WiFi | Bluetooth | Serial     |
+|----------|--------|------|------|-----------|------------|
+| ARM64    | RPI3   | ✅   | ⏳ Untested | ⏳ Internal BT is unreliable | ⏳ Untested |
+| ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested |
+| ARM64    | RPI5   | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
+| x86-64   | Intel/AMD PCs | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
 
 - Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm, 2025-05-13).
 - RPI3 and RPI5 expected to work but need further testing.
+- x86-64 support added via multi-platform Docker builds but needs testing.
 
 ---
 
@@ -23,7 +25,8 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 
 ### Prerequisites
 
-- **Raspberry Pi 3/4/5 running Raspberry Pi OS 64-bit (Bookworm or newer)**
+- **ARM64 systems**: Raspberry Pi 3/4/5 running Raspberry Pi OS 64-bit (Bookworm or newer)
+- **x86-64 systems**: Any Intel/AMD-based Linux system with Docker support
 - **Internet connection & Docker and Docker Compose installed**
 
 ### Install Docker & Docker Compose
@@ -39,12 +42,11 @@ chmod +x install-docker.sh
 newgrp docker
 ```
 
-**Launch MeshSense on your Raspberry Pi using the pre-built Docker image with the following command.**
+**Launch MeshSense on your system using the pre-built multi-platform Docker image with the following command.**
 
 Be sure to replace `changeme` with a secure access key before running!
 
-```
-
+```bash
 docker run --name meshsense \
 -p 5920:5920 \
 -e PORT=5920 \
@@ -58,12 +60,12 @@ docker run --name meshsense \
 --user 1000:1000 \
 --label project=meshsense \
 ghcr.io/roperscrossroads/meshsense-docker-arm64:main
-
 ```
 
-- It will be accessible at http://board-ip:5920/
+- It will be accessible at http://your-device-ip:5920/
+- Docker will automatically pull the correct image for your platform (ARM64 or x86-64)
 - See below for info on how to pair bluetooth devices.
-- Tested on RPI3 and RPI4, should work on RPI5.
+- Tested on RPI3 and RPI4, should work on RPI5 and x86-64 systems.
 - RPI3 internal bluetooth might not be reliable.
 
 ---
@@ -110,7 +112,7 @@ You must do the following on the host for the Docker container to access Meshtas
 
 ## Build & Run Locally
 
-This took a while to build on an RPI3 (35-40 minutes)
+Building locally will work on both ARM64 and x86-64 systems. This took a while to build on an RPI3 (35-40 minutes), but will be faster on x86-64 systems.
 
 ```bash
 git clone https://github.com/roperscrossroads/meshsense-docker-arm64.git
@@ -123,11 +125,42 @@ docker compose build
 docker compose up
 ```
 
+The build process will automatically detect your platform and build the appropriate image.
+
 Once everything works, run it detached from the terminal:
 
 ```bash
 docker compose up -d
 ```
+
+---
+
+## Multi-Platform Build Information
+
+This repository now supports building for both ARM64 and x86-64 architectures using Docker buildx:
+
+### Automatic Platform Selection
+- Docker automatically selects the correct image for your platform when pulling from the registry
+- No special configuration needed - just use the standard `docker run` command
+
+### Manual Multi-Platform Building
+If you want to build for multiple platforms manually:
+
+```bash
+# Set up buildx for cross-platform builds
+docker buildx create --name cross-platform --driver docker-container --bootstrap
+docker buildx use cross-platform
+
+# Build for both platforms
+docker buildx build --platform linux/arm64,linux/amd64 -t your-tag:latest .
+
+# Build and push to registry for both platforms
+docker buildx build --platform linux/arm64,linux/amd64 -t your-tag:latest --push .
+```
+
+### Supported Platforms
+- `linux/arm64` - For Raspberry Pi, Apple Silicon, and other ARM64 devices
+- `linux/amd64` - For Intel/AMD x86-64 systems
 
 ---
 

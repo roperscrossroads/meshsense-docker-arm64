@@ -4,10 +4,11 @@ FROM node:23-bookworm-slim AS builder
 ARG NATIVEBUILD=false
 ENV NATIVEBUILD=${NATIVEBUILD}
 
-RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /meshsense
-RUN git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
+RUN git config --global http.sslVerify false && \
+    git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
 
 RUN node ./update.mjs
 
