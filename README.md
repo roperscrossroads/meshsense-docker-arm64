@@ -8,15 +8,14 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 
 ## Testing Status
 
-| Platform | Device | Runs | WiFi | Bluetooth | Serial     |
+| Platform | Device | Runs | IP | Bluetooth | Serial     |
 |----------|--------|------|------|-----------|------------|
-| ARM64    | RPI3   | ✅   | ⏳ Untested | ⏳ Internal BT is unreliable | ⏳ Untested |
+| ARM64    | RPI3   | ✅   | ✅ | ⏳ Internal BT is unreliable | ⏳ Untested |
 | ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested |
-| ARM64    | RPI5   | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
+| ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested | ⏳ Untested |
 | x86-64   | Intel/AMD PCs | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
 
 - Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm, 2025-05-13).
-- RPI3 and RPI5 expected to work but need further testing.
 - x86-64 support added via multi-platform Docker builds but needs testing.
 
 ---
