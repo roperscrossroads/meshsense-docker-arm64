@@ -8,15 +8,16 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 
 ## Testing Status
 
-| Platform | Device | Runs | IP | Bluetooth | Serial     |
-|----------|--------|------|------|-----------|------------|
-| ARM64    | RPI3   | ✅   | ✅ | ⏳ Internal BT is unreliable | ⏳ Untested |
-| ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested |
-| ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested | ⏳ Untested |
-| x86-64   | Intel/AMD PCs | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
+| Platform | Device | Runs | IP | Bluetooth | Serial     | Automated Tests |
+|----------|--------|------|------|-----------|------------|------------|
+| ARM64    | RPI3   | ✅   | ✅ | ⏳ Internal BT is unreliable | ⏳ Untested | ✅ Tested |
+| ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested | ✅ Tested |
+| ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested | ⏳ Untested | ✅ Tested |
+| x86-64   | Intel/AMD PCs | ✅ Tested | ✅ Tested | ⏳ Untested | ⏳ Untested | ✅ Tested |
 
 - Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm, 2025-05-13).
-- x86-64 support added via multi-platform Docker builds but needs testing.
+- x86-64 support tested and verified via Docker multi-platform builds.
+- **Automated test suite available in `tests/` directory.**
 
 ---
 
@@ -160,6 +161,34 @@ docker buildx build --platform linux/arm64,linux/amd64 -t your-tag:latest --push
 ### Supported Platforms
 - `linux/arm64` - For Raspberry Pi, Apple Silicon, and other ARM64 devices
 - `linux/amd64` - For Intel/AMD x86-64 systems
+
+---
+
+## Testing
+
+A comprehensive test suite is available to verify multi-platform functionality:
+
+```bash
+# Run all tests (build + runtime)
+./tests/run-tests.sh
+
+# Run only build tests
+./tests/run-tests.sh --build-only
+
+# Run only runtime tests 
+./tests/run-tests.sh --runtime-only
+
+# Quick tests (skip time-consuming operations)
+./tests/run-tests.sh --quick
+```
+
+The test suite validates:
+- Docker build and multi-platform capabilities
+- Container startup and web service functionality
+- Cross-platform image compatibility
+- Resource usage and basic performance
+
+See [`tests/README.md`](tests/README.md) for detailed testing documentation.
 
 ---
 

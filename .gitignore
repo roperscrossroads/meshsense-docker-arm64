@@ -1,0 +1,21 @@
+# Test artifacts
+/tests/*.log
+/tmp/build-test-*
+*.tmp
+
+# Docker volumes
+meshsense-data/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env.local
+.env
