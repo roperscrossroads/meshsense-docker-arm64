@@ -168,26 +168,6 @@ docker buildx build --platform linux/arm64,linux/amd64 -t your-tag:latest --push
 
 A comprehensive test suite is available to verify multi-platform functionality:
 
-```bash
-# Run all tests (build + runtime)
-./tests/run-tests.sh
-
-# Run only build tests
-./tests/run-tests.sh --build-only
-
-# Run only runtime tests 
-./tests/run-tests.sh --runtime-only
-
-# Quick tests (skip time-consuming operations)
-./tests/run-tests.sh --quick
-```
-
-The test suite validates:
-- Docker build and multi-platform capabilities
-- Container startup and web service functionality
-- Cross-platform image compatibility
-- Resource usage and basic performance
-
 See [`tests/README.md`](tests/README.md) for detailed testing documentation.
 
 ---
