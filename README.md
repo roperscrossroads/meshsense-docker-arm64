@@ -13,7 +13,7 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 | ARM64    | RPI3   | ✅   | ✅ | ⏳ Internal BT is unreliable | ⏳ Untested |
 | ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested |
 | ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested | ⏳ Untested |
-| x86-64   | Intel/AMD PCs | ⏳ Untested | ⏳ Untested | ⏳ Untested | ⏳ Untested |
+| x86-64   | Intel/AMD PCs | ✅ | ✅ | ⏳ Untested | ⏳ Untested |
 
 - Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm, 2025-05-13).
 - x86-64 support added via multi-platform Docker builds but needs testing.
