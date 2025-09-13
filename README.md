@@ -19,6 +19,7 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 - Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm)
 - Verified on RPI5 with Raspberry Pi OS 64-bit (Debian Bookworm)
 - x86-64 support tested on Windows 11
+- **Automated test suite available in `tests/` directory.**
 
 ---
 
@@ -190,6 +191,14 @@ docker buildx build --platform linux/arm64,linux/amd64 -t your-tag:latest --push
 ### Supported Platforms
 - `linux/arm64` - For Raspberry Pi, Apple Silicon, and other ARM64 devices
 - `linux/amd64` - For Intel/AMD x86-64 systems
+
+---
+
+## Testing
+
+A comprehensive test suite is available to verify multi-platform functionality:
+
+See [`tests/README.md`](tests/README.md) for detailed testing documentation.
 
 ---
 
