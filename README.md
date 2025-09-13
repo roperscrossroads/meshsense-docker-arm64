@@ -1,22 +1,24 @@
-# MeshSense Docker Compose for Multi-Platform (ARM64 & x86-64)
+# MeshSense Docker Compose for ARM64 & x86-64
 
-This project builds MeshSense for multiple architectures (ARM64 and x86-64) that can easily be run on various platforms including 64-bit Raspberry Pi boards (RPI3/4/5), Intel/AMD systems, and other ARM64/x86-64 compatible hardware. It can be built locally but that takes a while so I would recommend starting with the automated build. If you have Docker installed, you can run MeshSense with a single command.
+This project builds Docker containers for [MeshSense](https://affirmatech.com/meshsense) for multiple architectures (ARM64 and x86-64) that can easily be run on various platforms including 64-bit Raspberry Pi boards (RPI3/4/5), Intel/AMD systems, and other ARM64/x86-64 compatible hardware. It can be built locally but that takes a while so I would recommend starting with the automated build. If you have Docker installed, you can run MeshSense with a single command.
 
-Please hop in the [CSRA Mesh Discord](https://discord.com/invite/mgzj2PmhKf) and the [Mountain Mesh Discord](https://discord.gg/4WN32RHGSs) if you get it going and have an questions.
+Please hop in the [CSRA Mesh Discord](https://discord.com/invite/mgzj2PmhKf), the [Middle GA Mesh Discord](https://discord.com/invite/6cSJ738Prp) or the [Mountain Mesh Discord](https://discord.gg/4WN32RHGSs) if you get it going and have an questions.
 
 Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSRA Mesh](http://csramesh.org) to get this started.
 
 ## Testing Status
 
-| Platform | Device | Runs | IP | Bluetooth | Serial     | Automated Tests |
-|----------|--------|------|------|-----------|------------|------------|
-| ARM64    | RPI3   | ✅   | ✅ | ⏳ Internal BT is unreliable | ⏳ Untested | ✅ Tested |
-| ARM64    | RPI4   | ✅   | ✅ | ✅ | ⏳ Untested | ✅ Tested |
-| ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested | ⏳ Untested | ✅ Tested |
-| x86-64   | Intel/AMD PCs | ✅ Tested | ✅ Tested | ⏳ Untested | ⏳ Untested | ✅ Tested |
+| Platform | Device | Runs | IP | Bluetooth |
+|----------|--------|------|------|-----------|
+| ARM64    | RPI3   | ✅   | ✅ | ❌ Internal BT is unreliable |
+| ARM64    | RPI4   | ✅   | ✅ | ✅ |
+| ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested |
+| x86-64   | Intel/AMD PCs | ✅ | ✅ | ⏳ Untested |
 
-- Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm, 2025-05-13).
-- x86-64 support tested and verified via Docker multi-platform builds.
+- Verified on RPI3 with Raspberry Pi OS 64-bit (Debian Bookworm)
+- Verified on RPI4 with Raspberry Pi OS 64-bit (Debian Bookworm)
+- Verified on RPI5 with Raspberry Pi OS 64-bit (Debian Bookworm)
+- x86-64 support tested on Windows 11
 - **Automated test suite available in `tests/` directory.**
 
 ---
@@ -29,7 +31,7 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 - **x86-64 systems**: Any Intel/AMD-based Linux system with Docker support
 - **Internet connection & Docker and Docker Compose installed**
 
-### Install Docker & Docker Compose
+### Debian & Ubuntu: Install Docker & Docker Compose
 
 You can **use the provided [`install-docker.sh`](https://github.com/roperscrossroads/meshsense-docker-arm64/blob/main/install-docker.sh) script**
 
@@ -42,9 +44,11 @@ chmod +x install-docker.sh
 newgrp docker
 ```
 
-**Launch MeshSense on your system using the pre-built multi-platform Docker image with the following command.**
+### Launch MeshSense (Docker Run Command)
 
-Be sure to replace `changeme` with a secure access key before running!
+#### **Linux / macOS**
+
+You can use the following **multi-line command** (with backslashes for line continuation):
 
 ```bash
 docker run --name meshsense \
@@ -62,6 +66,32 @@ docker run --name meshsense \
 ghcr.io/roperscrossroads/meshsense-docker-arm64:main
 ```
 
+Or as a **single line**:
+
+```bash
+docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_KEY=changeme -e DISPLAY=:99 --cap-add NET_ADMIN -v meshsense-data:/home/mesh/.meshsense -v /run/dbus:/run/dbus:ro --restart unless-stopped --user 1000:1000 --label project=meshsense ghcr.io/roperscrossroads/meshsense-docker-arm64:main
+```
+
+#### **Windows (Command Prompt / PowerShell)**
+
+Copy and paste the following **single-line command**—no backslashes, no line breaks:
+
+```powershell
+docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_KEY=changeme -e DISPLAY=:99 --cap-add NET_ADMIN -v meshsense-data:/home/mesh/.meshsense -v /run/dbus:/run/dbus:ro --restart unless-stopped --user 1000:1000 --label project=meshsense ghcr.io/roperscrossroads/meshsense-docker-arm64:main
+```
+
+**Notes:**
+- On Windows, you must use Docker Desktop.
+- If you want to mount a folder from your computer instead of a named volume, adjust the `-v` option. Example:  
+  `-v C:\path\to\data:/home/mesh/.meshsense`
+- Replace `changeme` in `-e ACCESS_KEY=changeme` with your own secure access key.
+
+---
+
+The service will be accessible at [http://your-device-ip:5920/](http://your-device-ip:5920/).
+Docker will automatically select the correct image for your platform (ARM64 or x86-64).
+
+
 - It will be accessible at http://your-device-ip:5920/
 - Docker will automatically pull the correct image for your platform (ARM64 or x86-64)
 - See below for info on how to pair bluetooth devices.
@@ -70,7 +100,7 @@ ghcr.io/roperscrossroads/meshsense-docker-arm64:main
 
 ---
 
-## Pair and Connect with `bluetoothctl`
+## Linux: Pair and Connect with `bluetoothctl`
 
 You must do the following on the host for the Docker container to access Meshtastic devices via Bluetooth:
 
