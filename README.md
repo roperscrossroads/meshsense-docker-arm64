@@ -2,7 +2,7 @@
 
 This project builds MeshSense for multiple architectures (ARM64 and x86-64) that can easily be run on various platforms including 64-bit Raspberry Pi boards (RPI3/4/5), Intel/AMD systems, and other ARM64/x86-64 compatible hardware. It can be built locally but that takes a while so I would recommend starting with the automated build. If you have Docker installed, you can run MeshSense with a single command.
 
-Please hop in the [CSRA Mesh Discord](https://discord.com/invite/mgzj2PmhKf) and the [Mountain Mesh Discord](https://discord.gg/4WN32RHGSs) if you get it going and have an questions.
+Please hop in the [CSRA Mesh Discord](https://discord.com/invite/mgzj2PmhKf), the [Middle GA Mesh Discord](https://discord.com/invite/6cSJ738Prp) or the [Mountain Mesh Discord](https://discord.gg/4WN32RHGSs) if you get it going and have an questions.
 
 Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSRA Mesh](http://csramesh.org) to get this started.
 
