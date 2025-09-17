@@ -1,0 +1,23 @@
+name: Clear GitHub Actions Cache
+on:
+  workflow_dispatch:
+
+jobs:
+  clear-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Delete all caches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List all caches and delete them
+          cache_ids=$(gh cache list --repo ${{ github.repository }} --limit 1000 --json id --jq '.[].id')
+          for cache_id in $cache_ids; do
+            echo "Deleting cache id: $cache_id"
+            gh cache delete $cache_id --repo ${{ github.repository }}
+          done
