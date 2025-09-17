@@ -46,7 +46,7 @@ newgrp docker
 
 ### Launch MeshSense (Docker Run Command)
 
-#### **Linux / macOS**
+#### **Linux & macOS**
 
 You can use the following **multi-line command** (with backslashes for line continuation):
 
