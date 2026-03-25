@@ -1,4 +1,4 @@
-# Stage 1: Builder
+# Stage 1: Build
 FROM node:23-bookworm-slim AS builder
 
 ARG NATIVEBUILD=false
