@@ -93,8 +93,8 @@ docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_
 The service will be accessible at [http://your-device-ip:5920/](http://your-device-ip:5920/).
 Docker will automatically select the correct image for your platform (ARM64 or x86-64).
 
-
 - It will be accessible at http://your-device-ip:5920/
+- On Windows, if `http://localhost:5920` doesn't work, try `http://127.0.0.1:5920` instead — Docker Desktop sometimes doesn't resolve `localhost` correctly for container ports.
 - Docker will automatically pull the correct image for your platform (ARM64 or x86-64)
 - See below for info on how to pair bluetooth devices.
 - Tested on RPI3 and RPI4, should work on RPI5 and x86-64 systems.
