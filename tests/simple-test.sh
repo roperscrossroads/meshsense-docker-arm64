@@ -63,7 +63,6 @@ if docker run -d \
     -e ACCESS_KEY=test-key \
     -e DISPLAY=:99 \
     --cap-add NET_ADMIN \
-    --user 1000:1000 \
     "$TEST_IMAGE" &> /dev/null; then
     log_success "Container started successfully"
 else

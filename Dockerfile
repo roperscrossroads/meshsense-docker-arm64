@@ -44,6 +44,7 @@ RUN apt-get update && \
         dbus \
         dumb-init \
         curl \
+        gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Add node user to dialout group for Bluetooth permissions
