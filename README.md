@@ -10,7 +10,7 @@ Thanks to [@dB-SPL](https://github.com/dB-SPL) for doing an writeup for the [CSR
 
 | Platform | Device | Runs | IP | Bluetooth |
 |----------|--------|------|------|-----------|
-| ARM64    | RPI3   | ✅   | ✅ | ❌ Internal BT is unreliable |
+| ARM64    | RPI3   | ✅   | ✅ | ❌ Internal BT is not reliable |
 | ARM64    | RPI4   | ✅   | ✅ | ✅ |
 | ARM64    | RPI5   | ✅   | ✅ | ⏳ Untested |
 | x86-64   | Intel/AMD PCs | ✅ | ✅ | ⏳ Untested |
