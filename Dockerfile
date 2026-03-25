@@ -6,11 +6,13 @@ ENV NATIVEBUILD=${NATIVEBUILD}
 
 RUN apt-get update && apt-get install -y libdbus-1-3 libdbus-1-dev cmake git build-essential ca-certificates && rm -rf /var/lib/apt/lists/*
 
+ARG MESHSENSE_VERSION=v1.1.0-beta.8
 WORKDIR /meshsense
 RUN git config --global http.sslVerify false && \
-    git clone --recurse-submodules https://github.com/Affirmatech/MeshSense.git .
-
-RUN node ./update.mjs
+    git clone --recurse-submodules \
+      --branch ${MESHSENSE_VERSION} \
+      --depth 1 \
+      https://github.com/Affirmatech/MeshSense.git .
 
 WORKDIR /meshsense/api/webbluetooth
 RUN npm install && npm run build:all

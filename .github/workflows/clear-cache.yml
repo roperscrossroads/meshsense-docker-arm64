@@ -6,11 +6,6 @@ jobs:
   clear-cache:
     runs-on: ubuntu-latest
     steps:
-      - name: Install GitHub CLI
-        run: |
-          sudo apt update
-          sudo apt install gh -y
-
       - name: Delete all caches
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

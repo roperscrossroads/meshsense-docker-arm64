@@ -7,25 +7,112 @@ on:
     paths-ignore:
       - '**.md'
       - 'docs/**'
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
   schedule:
     - cron: '00 15 * * 5' # Weekly, every Friday at 15:00 UTC.
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force build even if upstream version unchanged'
+        type: boolean
+        default: false
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      should_build: ${{ steps.version_check.outputs.should_build }}
+      upstream_version: ${{ steps.version_check.outputs.upstream_version }}
+
+    steps:
+      - name: Check upstream MeshSense version
+        id: version_check
+        env:
+          FORCE_BUILD: ${{ github.event.inputs.force_build }}
+        run: |
+          # Detect latest upstream tag
+          UPSTREAM_VERSION=$(git ls-remote --tags https://github.com/Affirmatech/MeshSense.git \
+            | grep -oP 'refs/tags/v[^\^]+' \
+            | sed 's|refs/tags/||' \
+            | sort -V \
+            | tail -1 || echo "unknown")
+
+          echo "Upstream version: $UPSTREAM_VERSION"
+          echo "upstream_version=$UPSTREAM_VERSION" >> "$GITHUB_OUTPUT"
+
+          if [ "$UPSTREAM_VERSION" = "unknown" ]; then
+            echo "WARNING: Could not detect upstream version, defaulting to build."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # On push events always build (our own files changed)
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "Push event — building unconditionally."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Force build via manual dispatch
+          if [ "$FORCE_BUILD" = "true" ]; then
+            echo "Force build requested."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Check what version is in the current latest image label
+          LAST_BUILT=$(docker manifest inspect ghcr.io/${{ github.repository }}:latest 2>/dev/null \
+            | jq -r '
+                (.manifests[0].annotations // {})
+                + (.annotations // {})
+                | .["org.opencontainers.image.version"] // empty' \
+            || echo "")
+
+          echo "Last built version: ${LAST_BUILT:-<none>}"
+
+          if [ "$UPSTREAM_VERSION" != "$LAST_BUILT" ]; then
+            echo "Version changed — building."
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No version change — skipping build."
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.should_build == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
+      actions: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Clear GHA cache on version bump
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_VERSION: ${{ needs.check.outputs.upstream_version }}
+        run: |
+          LAST_BUILT=$(docker manifest inspect ghcr.io/${{ github.repository }}:latest 2>/dev/null \
+            | jq -r '
+                (.manifests[0].annotations // {})
+                + (.annotations // {})
+                | .["org.opencontainers.image.version"] // empty' \
+            || echo "")
+
+          if [ -n "$LAST_BUILT" ] && [ "$UPSTREAM_VERSION" != "$LAST_BUILT" ]; then
+            echo "Version bump detected ($LAST_BUILT -> $UPSTREAM_VERSION). Clearing GHA cache."
+            gh cache list --repo ${{ github.repository }} --limit 1000 --json id --jq '.[].id' \
+              | xargs -r -I{} gh cache delete {} --repo ${{ github.repository }} || true
+          else
+            echo "No version bump — keeping existing cache."
+          fi
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -47,6 +134,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ needs.check.outputs.upstream_version }}
+            type=raw,value=latest
+            type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+            type=sha,prefix=sha-
+          labels: |
+            org.opencontainers.image.version=${{ needs.check.outputs.upstream_version }}
 
       - name: Build and Push
         id: build-and-push
@@ -54,13 +148,14 @@ jobs:
         with:
           context: .
           platforms: linux/arm64,linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             NATIVEBUILD=false
+            MESHSENSE_VERSION=${{ needs.check.outputs.upstream_version }}
 
       - name: Install cosign
         uses: sigstore/cosign-installer@v3
@@ -68,7 +163,6 @@ jobs:
           cosign-release: 'v2.2.4'
 
       - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
         env:
           TAGS: ${{ steps.meta.outputs.tags }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
