@@ -77,12 +77,14 @@ docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_
 Copy and paste the following **single-line command**—no backslashes, no line breaks:
 
 ```powershell
-docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_KEY=changeme -e DISPLAY=:99 --cap-add NET_ADMIN -v meshsense-data:/home/mesh/.meshsense -v /run/dbus:/run/dbus:ro --restart unless-stopped --user 1000:1000 --label project=meshsense ghcr.io/roperscrossroads/meshsense-docker-arm64:main
+docker run --name meshsense -p 5920:5920 -e PORT=5920 -e HOST=0.0.0.0 -e ACCESS_KEY=changeme -e DISPLAY=:99 --cap-add NET_ADMIN -v meshsense-data:/home/mesh/.meshsense --restart unless-stopped --label project=meshsense ghcr.io/roperscrossroads/meshsense-docker-arm64:main
 ```
 
 **Notes:**
 - On Windows, you must use Docker Desktop.
-- If you want to mount a folder from your computer instead of a named volume, adjust the `-v` option. Example:  
+- Do **not** include `-v /run/dbus:/run/dbus:ro` or `--user 1000:1000` on Windows — DBus is handled inside the container and those flags cause errors on Docker Desktop.
+- Bluetooth is **not supported** on Windows Docker Desktop. Use TCP to connect to your Meshtastic node instead.
+- If you want to mount a folder from your computer instead of a named volume, adjust the `-v` option. Example:
   `-v C:\path\to\data:/home/mesh/.meshsense`
 - Replace `changeme` in `-e ACCESS_KEY=changeme` with your own secure access key.
 

@@ -56,18 +56,19 @@ RUN mkdir -p /home/mesh && chown node:node /home/mesh
 COPY --from=builder --chown=node:node /meshsense /meshsense
 
 # Configure DBus with unique machine ID
-RUN mkdir -p /var/run/dbus && \
-    chown node:node /var/run/dbus && \
-    dbus-uuidgen > /var/lib/dbus/machine-id
+RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 # Security: Remove setuid from chrome-sandbox if exists
 RUN if [ -f /meshsense/chrome-sandbox ]; then \
         chmod 0755 /meshsense/chrome-sandbox; \
     fi
 
-USER node
+# Entrypoint starts dbus-daemon then drops to node user
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 WORKDIR /meshsense
 EXPOSE 5920
 
-ENTRYPOINT ["dumb-init", "--"]
+ENTRYPOINT ["dumb-init", "--", "/entrypoint.sh"]
 CMD ["node", "/meshsense/api/dist/index.cjs", "--headless", "--disable-gpu", "--in-process-gpu", "--disable-software-rasterizer"]
