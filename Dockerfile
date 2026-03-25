@@ -14,6 +14,9 @@ RUN git config --global http.sslVerify false && \
       --depth 1 \
       https://github.com/Affirmatech/MeshSense.git .
 
+WORKDIR /meshsense/api/meshtastic-js
+RUN npm install && npm run build
+
 WORKDIR /meshsense/api/webbluetooth
 RUN npm install && npm run build:all
 
